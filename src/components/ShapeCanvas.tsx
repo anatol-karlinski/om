@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { simplifyPolyline } from '../geometry/simplify.ts'
+import { strokeSmoothPolyline } from '../geometry/smoothPath.ts'
 import { addShape, type Point } from '../store/shapesSlice.ts'
 import { useAppDispatch } from '../store/hooks.ts'
 
@@ -16,7 +17,7 @@ function getPoint(canvas: HTMLCanvasElement, event: PointerEvent<HTMLCanvasEleme
   }
 }
 
-function paintStroke(canvas: HTMLCanvasElement, points: Point[]) {
+function paintStroke(canvas: HTMLCanvasElement, points: Point[], smooth = false) {
   console.log('Painting stroke with points:', points)
   const ctx = canvas.getContext('2d')
   if (!ctx) {
@@ -35,6 +36,12 @@ function paintStroke(canvas: HTMLCanvasElement, points: Point[]) {
   ctx.lineWidth = 2.5
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
+
+  if (smooth) {
+    strokeSmoothPolyline(ctx, points)
+    return
+  }
+
   ctx.beginPath()
   ctx.moveTo(points[0].x, points[0].y)
   for (let i = 1; i < points.length; i += 1) {
@@ -64,7 +71,7 @@ export function ShapeCanvas() {
     const dpr = window.devicePixelRatio || 1
     canvas.width = CANVAS_SIZE * dpr
     canvas.height = CANVAS_SIZE * dpr
-    paintStroke(canvas, pointsRef.current)
+    paintStroke(canvas, pointsRef.current, !isDrawingRef.current && pointsRef.current.length > 0)
   }, [])
 
   useEffect(() => {
@@ -135,7 +142,7 @@ export function ShapeCanvas() {
     }
 
     pointsRef.current = simplified
-    paintStroke(event.currentTarget, simplified)
+    paintStroke(event.currentTarget, simplified, true)
     setDraftPoints(simplified)
   }
 
@@ -185,7 +192,7 @@ export function ShapeCanvas() {
           <button type="button" className="btn btn-primary flex-grow-1" onClick={handleSave} disabled={!canSave}>
             Save
           </button>
-          <button type="button" className="btn btn-outline-secondary flex-grow-1" onClick={handleDiscard} disabled={!hasDraft}>
+          <button type="button" className="btn btn-secondary flex-grow-1" onClick={handleDiscard} disabled={!hasDraft}>
             Discard
           </button>
         </div>

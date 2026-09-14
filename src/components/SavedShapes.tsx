@@ -1,31 +1,23 @@
 import { selectShapes, type Point } from '../store/shapesSlice.ts'
 import { useAppSelector } from '../store/hooks.ts'
-
-function pathFromPoints(points: Point[]) {
-  return points
-    .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
-    .join(' ')
-}
+import { getSmoothPreview } from '../geometry/smoothPath.ts'
 
 function ShapePreview({ points }: { points: Point[] }) {
-  const xs = points.map((point) => point.x)
-  const ys = points.map((point) => point.y)
-  const minX = Math.min(...xs)
-  const minY = Math.min(...ys)
-  const maxX = Math.max(...xs)
-  const maxY = Math.max(...ys)
+  const preview = getSmoothPreview(points)
+  if (!preview) {
+    return null
+  }
+
   const pad = 12
-  const width = Math.max(maxX - minX, 1)
-  const height = Math.max(maxY - minY, 1)
 
   return (
     <svg
       className="shape-preview"
-      viewBox={`${minX - pad} ${minY - pad} ${width + pad * 2} ${height + pad * 2}`}
+      viewBox={`${preview.minX - pad} ${preview.minY - pad} ${preview.width + pad * 2} ${preview.height + pad * 2}`}
       aria-hidden="true"
     >
       <path
-        d={pathFromPoints(points)}
+        d={preview.d}
         fill="none"
         stroke="currentColor"
         strokeWidth="4"
