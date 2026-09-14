@@ -29,8 +29,8 @@ export function MatchCanvas({ onMatch }: MatchCanvasProps) {
   let result = 'Draw a shape to recognize it.'
   if (templates.length === 0) {
     result = 'Save a shape on the left first.'
-  } else if (match) {
-    result = `Matched: ${match.name}`
+  } else if (draftPoints.length > 0 && !isDrawing) {
+    result = match ? `Matched: ${match.name}` : 'No match'
   }
 
   return (
