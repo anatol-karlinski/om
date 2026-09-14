@@ -28,7 +28,7 @@ function ShapePreview({ points }: { points: Point[] }) {
   )
 }
 
-export function SavedShapes() {
+export function SavedShapes({ matchedId }: { matchedId: string | null }) {
   const shapes = useAppSelector(selectShapes)
 
   return (
@@ -39,7 +39,10 @@ export function SavedShapes() {
       ) : (
         <ul className="list-unstyled d-flex flex-column gap-2 mb-0">
           {shapes.map((shape) => (
-            <li key={shape.id} className="saved-shape-item d-flex align-items-center gap-3">
+            <li
+              key={shape.id}
+              className={`saved-shape-item d-flex align-items-center gap-3${shape.id === matchedId ? ' is-matched' : ''}`}
+            >
               <ShapePreview points={shape.points} />
               <div className="d-flex flex-column">
                 <span>{shape.name}</span>

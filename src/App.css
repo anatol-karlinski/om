@@ -2,6 +2,10 @@
   min-height: 100vh;
 }
 
+.saved-shape-item.is-matched {
+  border-color: var(--bs-primary, #0d6efd);
+}
+
 .shape-canvas-frame {
   position: relative;
   width: 300px;
