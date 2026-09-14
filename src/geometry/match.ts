@@ -80,7 +80,6 @@ export function matchShape(drawing: Point[], templates: ShapeTemplate[]): ShapeM
     }
   }
 
-  // TODO: Find better threshold, current too strict.
   if (!best || best.distance > MATCH_REJECT_THRESHOLD) {
     return null
   }
