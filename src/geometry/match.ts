@@ -3,7 +3,7 @@ import { normalizePolyline } from './polyline.ts'
 
 const MAX_ALIGN_ANGLE = (18 * Math.PI) / 180
 const ALIGN_ANGLE_STEP = (2 * Math.PI) / 180
-export const MATCH_REJECT_THRESHOLD = 0.2
+export const MATCH_REJECT_THRESHOLD = 0.5
 
 export type ShapeTemplate = {
   id: string
@@ -81,9 +81,9 @@ export function matchShape(drawing: Point[], templates: ShapeTemplate[]): ShapeM
   }
 
   // TODO: Find better threshold, current too strict.
-  // if (!best || best.distance > MATCH_REJECT_THRESHOLD) {
-  //   return null
-  // }
+  if (!best || best.distance > MATCH_REJECT_THRESHOLD) {
+    return null
+  }
 
   return best
 }
